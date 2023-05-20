@@ -1,21 +1,9 @@
-const print = (node, prefix = '', isLeft = true) => {
-    if (node === null) {
-        return;
-    }
-    if (node.right !== null) {
-        print(node.right, `${prefix}${isLeft ? '│   ' : '    '}`, false);
-    }
-    console.log(`${prefix}${isLeft ? '└── ' : '┌── '}${node.data}`);
-    if (node.left !== null) {
-        print(node.left, `${prefix}${isLeft ? '    ' : '│   '}`, true);
-    }
-}
-
+// node factory
 const createNode = (data, left, right) => {
     return { data, left, right };
 }
 
-// factory
+// tree factory
 const createTree = array => {
 
     // sort array
@@ -24,10 +12,10 @@ const createTree = array => {
     sorted.forEach((element, index) => {
         if (sorted[index] === sorted[index + 1]) sorted.splice(index, 1);
     });
-    // generate root
-    let root = buildTree(sorted);
+    // generate tree
+    let root = _buildTree(sorted);
 
-    function buildTree(array) {
+    function _buildTree(array) {
 
         if (array.length == 0) return null;
         if (array.length == 1) return createNode(array[0], null, null);
@@ -36,8 +24,7 @@ const createTree = array => {
         let data = array[mid];
         let left = array.slice(0, mid);
         let right = array.slice(mid + 1);
-        return createNode(data, buildTree(left), buildTree(right));
-
+        return createNode(data, _buildTree(left), _buildTree(right));
     }
 
     function insert(value) {
@@ -63,6 +50,7 @@ const createTree = array => {
         if (value < parent.data) parent.left = newNode;
         else if (value > parent.data) parent.right = newNode;
     }
+    
 
     function remove(value) { // some cases still problematic
         let parent = null;
@@ -75,7 +63,6 @@ const createTree = array => {
             // if traversal is complete and value not found, return
             if (!pos) return;
         }
-
         // if value is found
         // if node has no children, remove it
         if (!pos.left && !pos.right) {
@@ -101,8 +88,7 @@ const createTree = array => {
             // right case
             else if (value > parent.data) parent.right = pos.left;
         }
-
-        // if node has two children (hard case)
+        // if node has two children (tricky case)
         else {
             // find inorder successor
             parent = null; // to catch if there is no left traversal (parent in relation to temp, not pos)
@@ -118,6 +104,7 @@ const createTree = array => {
             else pos.right = temp.right; // if no left traversal
         }
     }
+    
 
     function find(value) {
         if (typeof value != "number") return "Value not found."
@@ -128,6 +115,7 @@ const createTree = array => {
         }
         return pos ? pos : "Value not found."
     }
+    
 
     function levelOrder(cb) {
         let queue = [];
@@ -146,6 +134,7 @@ const createTree = array => {
         }
         if (catchArray.length > 0) return catchArray;
     }
+    
 
     function inorder(cb) { //LDR
         let catchArray = [];
@@ -162,6 +151,7 @@ const createTree = array => {
         traverse(this.root);
         if (catchArray.length > 0) return catchArray;
     }
+    
 
     function preorder(cb) { //DLR
         let catchArray = [];
@@ -178,6 +168,7 @@ const createTree = array => {
         traverse(this.root);
         if (catchArray.length > 0) return catchArray;
     }
+    
 
     function postorder(cb) { //LRD
         let catchArray = [];
@@ -194,6 +185,7 @@ const createTree = array => {
         traverse(this.root);
         if (catchArray.length > 0) return catchArray;
     }
+    
 
     function depth(node) { // use with find()
         if (typeof node == "string") return "Node not found."; //catch negative result from find()
@@ -207,6 +199,7 @@ const createTree = array => {
         return d;
     }
 
+
     function treeHeight(from) {
         const max = (a, b) => {
             if (a > b) return a;
@@ -218,6 +211,7 @@ const createTree = array => {
         }
         return traverse(from);
     }
+    
 
     function height(node) { // use with find()
         if (typeof node == "string") return "Node not found."; //catch negative result from find()
@@ -225,6 +219,7 @@ const createTree = array => {
         const treeHeight = this.treeHeight(this.root);
         return treeHeight - 1 - depth;
     }
+    
 
     function isBalanced() {
         function traverse(pos) {
@@ -236,12 +231,14 @@ const createTree = array => {
         }
         return traverse(this.root);
     }
+    
 
     function rebalance() {
         let newArray = this.inorder();
-        let newRoot = buildTree(sort(newArray));
+        let newRoot = _buildTree(sort(newArray));
         this.root = newRoot;
     }
+    
 
     return {
         root,
@@ -260,12 +257,61 @@ const createTree = array => {
     };
 }
 
-// use these trees to play with methods
+
+// example trees for testing
 let tree = createTree([1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324]);
 let fir = createTree([8, 4, 11, 7, 3, 15, 9]);
 let test = createTree([827, 1, 9, 8, 8, 2, 928, 82, 53, 1, 782, 52, 92, 593]);
 
-// callback for testing
+// callback for testing traversal methods
 function logData(x) {
     console.log(x.data);
+}
+
+// supporting functions
+// mergesort
+function sort(array) {
+    if (left(array).length <= 1 && right(array).length <= 1) {
+    return merge(left(array), right(array));
+    }
+    return merge(sort(left(array)), sort(right(array)));
+}
+
+function merge(array1, array2) {
+    let newArray = [];
+    while (array1.length > 0 || array2.length > 0) {
+        let smallest = (array1.length == 0)
+        ? array2.shift() 
+        : (array2.length == 0)
+        ? array1.shift()
+        : (array1[0] < array2[0]) 
+        ? array1.shift() 
+        : array2.shift();
+        newArray.push(smallest);
+    }
+    return newArray;
+}
+
+function left(array) {
+    let half = Math.ceil(array.length / 2);
+    return array.slice(0, half);
+}
+
+function right(array) {
+    let half = Math.ceil(array.length / 2);
+    return array.slice(half, array.length);
+}
+
+// print tree
+const print = (node, prefix = '', isLeft = true) => {
+    if (node === null) {
+        return;
+    }
+    if (node.right !== null) {
+        print(node.right, `${prefix}${isLeft ? '│   ' : '    '}`, false);
+    }
+    console.log(`${prefix}${isLeft ? '└── ' : '┌── '}${node.data}`);
+    if (node.left !== null) {
+        print(node.left, `${prefix}${isLeft ? '    ' : '│   '}`, true);
+    }
 }
