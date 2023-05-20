@@ -77,7 +77,6 @@ const createTree = array => {
             else if (value < parent.data) parent.left = pos.right;
             // right case
             else if (value > parent.data) parent.right = pos.right;
-
         }
         // if node has no right child, point parent to its left child
         else if (!pos.right) {
