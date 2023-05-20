@@ -50,7 +50,6 @@ const createTree = array => {
         if (value < parent.data) parent.left = newNode;
         else if (value > parent.data) parent.right = newNode;
     }
-    
 
     function remove(value) { // some cases still problematic
         let parent = null;
@@ -103,7 +102,6 @@ const createTree = array => {
             else pos.right = temp.right; // if no left traversal
         }
     }
-    
 
     function find(value) {
         if (typeof value != "number") return "Value not found."
@@ -115,7 +113,6 @@ const createTree = array => {
         return pos ? pos : "Value not found."
     }
     
-
     function levelOrder(cb) {
         let queue = [];
         let catchArray = [];
@@ -134,7 +131,6 @@ const createTree = array => {
         if (catchArray.length > 0) return catchArray;
     }
     
-
     function inorder(cb) { //LDR
         let catchArray = [];
         function traverse(pos) {
@@ -151,7 +147,6 @@ const createTree = array => {
         if (catchArray.length > 0) return catchArray;
     }
     
-
     function preorder(cb) { //DLR
         let catchArray = [];
         function traverse(pos) {
@@ -168,7 +163,6 @@ const createTree = array => {
         if (catchArray.length > 0) return catchArray;
     }
     
-
     function postorder(cb) { //LRD
         let catchArray = [];
         function traverse(pos) {
@@ -185,7 +179,6 @@ const createTree = array => {
         if (catchArray.length > 0) return catchArray;
     }
     
-
     function depth(node) { // use with find()
         if (typeof node == "string") return "Node not found."; //catch negative result from find()
         let d = 0;
@@ -197,7 +190,6 @@ const createTree = array => {
         }
         return d;
     }
-
 
     function treeHeight(from) {
         const max = (a, b) => {
@@ -211,7 +203,6 @@ const createTree = array => {
         return traverse(from);
     }
     
-
     function height(node) { // use with find()
         if (typeof node == "string") return "Node not found."; //catch negative result from find()
         const depth = this.depth(node);
@@ -219,7 +210,6 @@ const createTree = array => {
         return treeHeight - 1 - depth;
     }
     
-
     function isBalanced() {
         function traverse(pos) {
             if (!pos) return true;
@@ -231,14 +221,12 @@ const createTree = array => {
         return traverse(this.root);
     }
     
-
     function rebalance() {
         let newArray = this.inorder();
         let newRoot = _buildTree(sort(newArray));
         this.root = newRoot;
     }
     
-
     return {
         root,
         insert,
